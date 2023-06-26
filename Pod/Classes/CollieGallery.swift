@@ -122,6 +122,7 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
         self.theme = (theme != nil) ? theme! : CollieGalleryTheme.defaultTheme
     }
     
+    private var isStatusBarHidden: Bool = true
     
     // MARK: - UIViewController functions
     open override func viewDidLoad() {
@@ -133,7 +134,8 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
         super.viewWillAppear(animated)
         
         if !UIApplication.shared.isStatusBarHidden {
-            UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
+            isStatusBarHidden = true
+            self.setNeedsStatusBarAppearanceUpdate()
         }
         
         pagingScrollView.delegate = self
@@ -160,7 +162,8 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
         super.viewWillDisappear(animated)
         
         if UIApplication.shared.isStatusBarHidden {
-            UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.none)
+            isStatusBarHidden = false
+            self.setNeedsStatusBarAppearanceUpdate()
         }
         
         pagingScrollView.delegate = nil
@@ -172,7 +175,11 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
     }
     
     override open var prefersStatusBarHidden : Bool {
-        return true
+        return isStatusBarHidden
+    }
+    
+    open override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation{
+        return .slide
     }
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -460,29 +467,29 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
         
         UIView.animate(withDuration: 0.2, delay: 0.0,
                        options: UIView.AnimationOptions(),
-                                   animations: { [weak self] in
-                                                    self?.closeButton.alpha = 1.0
-                                                    self?.actionButton?.alpha = 1.0
-                                                    self?.progressTrackView?.alpha = 1.0
-                                                    self?.captionView.alpha = 1.0
-                                   }, completion: nil)
+                       animations: { [weak self] in
+                                        self?.closeButton.alpha = 1.0
+                                        self?.actionButton?.alpha = 1.0
+                                        self?.progressTrackView?.alpha = 1.0
+                                        self?.captionView.alpha = 1.0
+                       }, completion: nil)
     }
     
     fileprivate func hideControls() {
         UIView.animate(withDuration: 0.2, delay: 0.0,
                        options: UIView.AnimationOptions(),
-                                   animations: { [weak self] in
-                                        self?.closeButton.alpha = 0.0
-                                        self?.actionButton?.alpha = 0.0
-                                        self?.progressTrackView?.alpha = 0.0
-                                        self?.captionView.alpha = 0.0
-                                   },
-                                   completion: { [weak self] _ in
-                                        self?.closeButton.isHidden = true
-                                        self?.actionButton?.isHidden = true
-                                        self?.progressTrackView?.isHidden = true
-                                        self?.captionView.isHidden = true
-                                   })
+                       animations: { [weak self] in
+                            self?.closeButton.alpha = 0.0
+                            self?.actionButton?.alpha = 0.0
+                            self?.progressTrackView?.alpha = 0.0
+                            self?.captionView.alpha = 0.0
+                       },
+                       completion: { [weak self] _ in
+                            self?.closeButton.isHidden = true
+                            self?.actionButton?.isHidden = true
+                            self?.progressTrackView?.isHidden = true
+                            self?.captionView.isHidden = true
+                       })
     }
     
     fileprivate func getCaptionViewFrame(_ availableSize: CGSize) -> CGRect {

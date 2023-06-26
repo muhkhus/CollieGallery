@@ -9,7 +9,7 @@
 import UIKit
 
 /// Protocol to implement the gallery
-@objc public protocol CollieGalleryDelegate: class {
+@objc public protocol CollieGalleryDelegate: AnyObject {
     
     /// Called when the gallery index changes
     @objc optional func gallery(_ gallery: CollieGallery, indexChangedTo index: Int)
