@@ -223,15 +223,17 @@ internal class CollieGalleryView: UIView, UIScrollViewDelegate {
                 let request: URLRequest = URLRequest(url: URL(string: url)!)
                 let session = URLSession.shared
                 let task = session.dataTask(with: request as URLRequest) { [weak self] data, response, error in
-                    if error == nil {
-                        let image = UIImage(data: data!)!
-                        
+                    if let data = data, let image = UIImage(data: data), error == nil {
                         DispatchQueue.main.async(execute: {
                             self?.imageView.image = image
                             self?.updateImageViewSize()
                             
                             self?.activityIndicator.stopAnimating()
                         })
+                    } else {
+                      DispatchQueue.main.async(execute: {
+                        self?.activityIndicator.stopAnimating()
+                      })
                     }
                 }
                 task.resume()
